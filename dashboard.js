@@ -42,8 +42,11 @@ function initColumns() {
 google.load("feeds", "1");
 var widgetCounter = 0;
 function setFeed(url, col, start) {
+    if (url.substring(0, 4) != "http") {
+        url = "http://" + url;
+    }
     var feed = new google.feeds.Feed(url);
-    feed.load(function (result) {
+    var onLoad = function (result) {
 //        if (!result.error) {
         var content = $("<table class='feed'></table>");
         if (!result.error) {
@@ -52,7 +55,12 @@ function setFeed(url, col, start) {
                 content.append($("<tr><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
             }
         } else {
-            content.append($("<div class='error'>Error while loading URL: '" + url + "'</div>"));
+            if (url.substring(url.length - 3) != "rss") {
+                setFeed((url.substring(url.length - 1) == "/") ? (url + "rss") : (url + "/rss"), col, start);
+                return;
+            } else {
+                content.append($("<div class='error'>Error while loading URL: '" + url + "'</div>"));
+            }
         }
         var portlet = $("<div class='portlet'></div>");
         var portletHeader = $("<div class='portlet-header'><div class='title'></div><div class='close' title='Remove this feed'>&#215;</div></div>");
@@ -61,18 +69,18 @@ function setFeed(url, col, start) {
         } else {
             portletHeader.find(".title").text("Error");
         }
-        var portletContent = $("<div class='portlet-content"+(start ? " highlight" : "")+"'></div>");
+        var portletContent = $("<div class='portlet-content" + (start ? " highlight" : "") + "'></div>");
         portletContent.append(content);
         portlet.append(portletHeader);
         portlet.append(portletContent);
         if (start) {
-            $($(".column")[col]).hide().prepend(portlet).fadeIn('slow', function() {
+            $($(".column")[col]).hide().prepend(portlet).fadeIn('slow', function () {
                 portletContent.removeClass("highlight", 2000);
             });
         } else {
             $($(".column")[col]).append(portlet);
         }
-        portlet.find(".close").on("click", function(e) {
+        portlet.find(".close").on("click", function (e) {
             var idx = portlet.index();
             portlet.fadeOut();
             if (feeds[col].length == 1) {
@@ -82,7 +90,8 @@ function setFeed(url, col, start) {
             }
             setUrl();
         });
-    });
+    };
+    feed.load(onLoad);
 }
 function getURLParameter(name) {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
@@ -99,10 +108,15 @@ function addFeed(urls) {
 var feeds = {};
 
 function initDefault() {
+//    feeds = [
+//        [ "http://www.arretsurimages.net/rss/tous-les-contenus.rss", "http://www.rue89.com/homepage/feed" ],
+//        [ "http://www.lemonde.fr/rss/sequence/0,2-3208,1-0,0.xml", "http://www.liberation.fr/interactif/rss/actualites/index.FR.php" ],
+//        [ "http://www.mediapart.fr/articles/feed", "http://feedproxy.google.com/TechCrunch" ],
+//    ];
     feeds = [
-        [ "http://www.arretsurimages.net/rss/tous-les-contenus.rss", "http://www.rue89.com/homepage/feed" ],
-        [ "http://www.lemonde.fr/rss/sequence/0,2-3208,1-0,0.xml", "http://www.liberation.fr/interactif/rss/actualites/index.FR.php" ],
-        [ "http://www.mediapart.fr/articles/feed", "http://feedproxy.google.com/TechCrunch" ],
+        [ "mashable.com", "http://feeds.bbci.co.uk/news/world/rss.xml" ],
+        [ "http://feeds.feedburner.com/cnet/NnTv", "http://rss.news.yahoo.com/rss/mostemailed" ],
+        [ "http://rss.cnn.com/rss/edition.rss", "http://feedproxy.google.com/TechCrunch" ],
     ];
     setUrl();
 }

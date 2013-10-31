@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Good Bye IGoogle Dashboard</title>
+    <link href="main.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="dashboard.js"></script>
+    <script type="text/javascript" >
+        $(function () {
+            var feedsParam = getURLParameter("feeds");
+            if (feedsParam) {
+                feeds = $.parseJSON(feedsParam);
+            } else {
+                initDefault();
+            }
+            initDashboard();
+        });
+    </script>
+</head>
+
+<body>
+<div style="padding-top: 5px;">
+    <input type="text" placeholder="Enter feed URL" id="feedUrl" size="60"/>
+    <button class="btn" id="addFeed">
+        Add Feed
+    </button>
+</div>
+<hr/>
+
+<div class="columns">
+
+</div>
+
+</body>
+</html>

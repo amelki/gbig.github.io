@@ -1,45 +1,102 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
+<head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="Gbig.github.io : Good Bye IGoogle" />
-
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link href="main.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="dashboard.js"></script>
+    <script type="text/javascript" src="import-ig.js"></script>
+</head>
 
-    <title>Gbig.github.io</title>
-  </head>
+<body>
 
-  <body>
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+    <header class="inner">
+        <a id="forkme_banner" href="https://github.com/gbig">View on GitHub</a>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/gbig">View on GitHub</a>
+        <h1 id="project_title">IFeedle</h1>
+        <h2 id="project_tagline">Dead simple dashboards for your feeds, no sign in required, ever.</h2>
 
-          <h1 id="project_title">Gbig.github.io</h1>
-          <h2 id="project_tagline">Good Bye IGoogle</h2>
+    </header>
+</div>
 
-        </header>
-    </div>
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+        <p>48 hours before the end of IGoogle, I finally decided to find a replacement for hosting my feeds. I tried several products, but
+            none of them was satisfying for me, so I created IFeedle. It replaces 99% of the functionalities I was using from IGoogle: display a
+            set of feeds as "widgets" on a three columns layout.
+        </p>
+        <p>
+            IFeedle is dead simple: open a <a href="dashboard.html " target="blank">blank dashboard</a>, or one of the examples below, and add feeds. Then, simply bookmark
+            the page, and you're done! You can also import your IGoogle settings file as described below.
+        </p>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p>Good Bye IGoogle.
-A few lines of code to replace 99% of the functionalities I was using on IGoogle: display a set of feeds as "portlets" on a three columns layout.</p>
-      </section>
-    </div>
+        <h3>
+            Examples
+        </h3>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
+        <ul>
+            <li>
+                <a href="dashboard.html" target="_blank">French newspapers</a>
+            </li>
+        </ul>
+
+        <h3>
+            IGoogle import
+        </h3>
+
+        <p>
+            If you still have your IGoogle settings file (Settings menu, then "Export" button), you can even import it: IFeedle will create a new browser tab for
+            each IGoogle tab, and each RSS feed found will be displayed as a feed widget.
+            <p/>
+            <input type="file" id="files" name="files[]"/>
+
+        <ul id="igoogle">
+
+        </ul>
+
+        </p>
+
+        <h3>
+            Coming soon...
+        </h3>
+        <p>
+            I just started developing IFeedle so that you and I can import our IGoogle settings when it's still time. I have plenty of ideas of cool
+            features to add to IFeedle. Here is a list off the top of my head:
+
+            <ul>
+                <li>Save configuration when moving widgets (this one sounds like a bug)</li>
+                <li>Add a thumbnail for each feed item</li>
+                <li>Configure how many feed items can be displayed on a given widget</li>
+                <li>Hide the top bar by default, and make it appear on rollover only</li>
+                <li>Support other types of widgets such as a Twitter and Facebook (no, I won't provide a weather widget!)</li>
+                <li>Change the number of columns (current default is 3)</li>
+                <li>Add a feed with a search string (would display a dropdown with the list of feeds found)</li>
+                <li>...</li>
+            </ul>
+        </p>
+
+
+    </section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+    <footer class="inner">
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
+    </footer>
+</div>
 
-    
 
-  </body>
+
+</body>
 </html>

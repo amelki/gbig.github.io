@@ -52,7 +52,10 @@ function setFeed(url, col, start) {
         if (!result.error) {
             for (var i = 0; i < result.feed.entries.length; i++) {
                 var entry = result.feed.entries[i];
-                content.append($("<tr><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
+                content.append($("<tr><td class='image'></td><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
+                $.get(entry.link, function(text) {
+                    console.log(text);
+                });
             }
         } else {
             if (url.substring(url.length - 3) != "rss") {

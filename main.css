@@ -7,6 +7,10 @@ body { min-width: 520px; }
 .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
 .ui-sortable-placeholder * { visibility: hidden; }
 
+a, a:visited {
+    color: #3498db;
+}
+
 .feed a {
     color: #3498db;
     text-decoration: none;
@@ -90,3 +94,8 @@ body {
     color: red;
 }
 
+.fb_edge_widget_with_comment {
+    position: absolute !important;
+    top: 45px;
+    right: 10px;
+}

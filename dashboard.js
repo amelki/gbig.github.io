@@ -22,7 +22,13 @@ JSON.stringify = JSON.stringify || function (obj) {
 };
 function initColumns() {
     $( ".column" ).sortable({
-        connectWith: ".column"
+        connectWith: ".column",
+        receive: function(event, ui) {
+            widgetMoved();
+        },
+        update: function(event, ui) {
+            widgetMoved();
+        }
     });
 
     $( ".portlet" ).addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
@@ -41,60 +47,76 @@ function initColumns() {
 }
 google.load("feeds", "1");
 var widgetCounter = 0;
-function setFeed(url, col, start) {
-    if (url.substring(0, 4) != "http") {
-        url = "http://" + url;
-    }
-    var feed = new google.feeds.Feed(url);
-    var onLoad = function (result) {
+
+function loadFeed(result, url, col, start) {
 //        if (!result.error) {
-        var content = $("<table class='feed'></table>");
-        if (!result.error) {
-            for (var i = 0; i < result.feed.entries.length; i++) {
-                var entry = result.feed.entries[i];
-                content.append($("<tr><td class='image'></td><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
-                $.get(entry.link, function(text) {
-                    console.log(text);
-                });
-            }
-        } else {
-            if (url.substring(url.length - 3) != "rss") {
-                setFeed((url.substring(url.length - 1) == "/") ? (url + "rss") : (url + "/rss"), col, start);
-                return;
-            } else {
-                content.append($("<div class='error'>Error while loading URL: '" + url + "'</div>"));
-            }
+    var content = $("<table class='feed'></table>");
+    if (!result.error) {
+        for (var i = 0; i < result.feed.entries.length; i++) {
+            var entry = result.feed.entries[i];
+            content.append($("<tr><td class='image'></td><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
+//                $.get(entry.link, function(text) {
+//                    console.log(text);
+//                });
         }
-        var portlet = $("<div class='portlet'></div>");
-        var portletHeader = $("<div class='portlet-header'><div class='title'></div><div class='close' title='Remove this feed'>&#215;</div></div>");
-        if (!result.error) {
-            portletHeader.find(".title").text(result.feed.title);
+    } else {
+        if (url.substring(url.length - 3) != "rss") {
+            setFeed((url.substring(url.length - 1) == "/") ? (url + "rss") : (url + "/rss"), col, start);
+            return;
         } else {
-            portletHeader.find(".title").text("Error");
+            content.append($("<div class='error'>Error while loading URL: '" + url + "'</div>"));
         }
-        var portletContent = $("<div class='portlet-content" + (start ? " highlight" : "") + "'></div>");
-        portletContent.append(content);
-        portlet.append(portletHeader);
-        portlet.append(portletContent);
-        if (start) {
-            $($(".column")[col]).hide().prepend(portlet).fadeIn('slow', function () {
-                portletContent.removeClass("highlight", 2000);
-            });
-        } else {
-            $($(".column")[col]).append(portlet);
-        }
-        portlet.find(".close").on("click", function (e) {
-            var idx = portlet.index();
-            portlet.fadeOut();
-            if (feeds[col].length == 1) {
-                feeds[col] = [];
-            } else {
-                feeds[col].splice(idx, 1);
-            }
-            setUrl();
+    }
+    var portlet = $("<div class='portlet'></div>");
+    portlet.data("url", url);
+    var portletHeader = $("<div class='portlet-header'><div class='title'></div><div class='close' title='Remove this feed'>&#215;</div></div>");
+    if (!result.error) {
+        portletHeader.find(".title").text(result.feed.title);
+    } else {
+        portletHeader.find(".title").text("Error");
+    }
+    var portletContent = $("<div class='portlet-content" + (start ? " highlight" : "") + "'></div>");
+    portletContent.append(content);
+    portlet.append(portletHeader);
+    portlet.append(portletContent);
+    if (start) {
+        $($(".column")[col]).hide().prepend(portlet).fadeIn('slow', function () {
+            portletContent.removeClass("highlight", 2000);
         });
-    };
-    feed.load(onLoad);
+    } else {
+        $($(".column")[col]).append(portlet);
+    }
+    portlet.find(".close").on("click", function (e) {
+        var idx = portlet.index();
+        portlet.fadeOut();
+        if (feeds[col].length == 1) {
+            feeds[col] = [];
+        } else {
+            feeds[col].splice(idx, 1);
+        }
+        setUrl();
+    });
+};
+
+function setFeed(url, col, start) {
+    if (url == 'https://mail.google.com/mail/feed/atom') {
+        $.getJSON(url, function(feedStr) {
+            alert(feedStr);
+            var parsed = new DOMParser().parseFromString(feedStr, "text/xml");
+            var result = {};
+            result.title = parsed.getElementsByTagName("title")[0];
+            result.entries = [];
+            loadFeed(result, url, col, start);
+        });
+    } else {
+        if (url.substring(0, 4) != "http") {
+            url = "http://" + url;
+        }
+        var feed = new google.feeds.Feed(url);
+        feed.load(function(result) {
+            loadFeed(result, url, col, start);
+        });
+    }
 }
 function getURLParameter(name) {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
@@ -130,6 +152,18 @@ function setUrl() {
 
 function makeUrl(feeds) {
     return "dashboard.html?feeds=" + encodeURIComponent(JSON.stringify(feeds));
+}
+
+function widgetMoved() {
+    feeds = [];
+    $(".column").each(function() {
+        var urls = [];
+        $(this).find(".portlet").each(function() {
+            urls[urls.length] = $(this).data("url");
+        });
+        feeds[feeds.length] = urls;
+    });
+    setUrl();
 }
 
 function initDashboard() {

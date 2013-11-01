@@ -1,4 +1,5 @@
 function importIGoogleSettings(evt) {
+    ga('send', 'event', 'import-igoogle', "", 'user-action');
     var files = evt.target.files; // FileList object
     // files is a FileList of File objects. List some properties.
     for (var i = 0, f; f = files[i]; i++) {

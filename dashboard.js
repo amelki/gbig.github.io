@@ -150,9 +150,11 @@ function initDashboard() {
     }
     initColumns();
     $("#addFeed").on("click", function(e) {
+        ga('send', 'event', 'add-feed', $("#feedUrl").val(), 'user-action');
         addFeed($("#feedUrl").val());
     });
     $("#feedUrl").on("keypress", function(e) {
+        ga('send', 'event', 'add-feed', $("#feedUrl").val(), 'user-action');
         var keycode = (e.keyCode ? e.keyCode : e.which);
         if (keycode == '13') {
             addFeed($("#feedUrl").val());

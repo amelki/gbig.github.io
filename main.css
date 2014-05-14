@@ -37,7 +37,13 @@ a, a:visited {
     /*border-bottom: 1px solid #cccccc;*/
     padding-bottom: 10px;
     padding-top: 10px;
+    vertical-align: top;
 }
+
+.feed td.image img {
+    margin-right: 5px;
+}
+
 .sDashboard-circle-plus-icon {
     display: none;
 }

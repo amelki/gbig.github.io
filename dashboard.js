@@ -75,13 +75,40 @@ function makePortlet(url, col, start, content) {
     });
     return portlet;
 }
+
+function getThumbnailUrl(entry) {
+    if (entry.mediaGroups && entry.mediaGroups.length > 0) {
+        for (var m = 0; m < entry.mediaGroups.length; m++) {
+            var mediaGroup = entry.mediaGroups[m];
+            if (mediaGroup.contents && mediaGroup.contents.length > 0) {
+                for (var c = 0; c < mediaGroup.contents.length; c++) {
+                    var content = mediaGroup.contents[c];
+                    if (content.medium == 'image') {
+                        if (content.thumbnails && content.thumbnails.length > 0) {
+                            for (var t = 0; t < content.thumbnails.length; t++) {
+                                var thumbnail = content.thumbnails[t];
+                                var url = thumbnail.url;
+                                if (url) {
+                                    return url;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return null;
+}
+
 function loadFeed(result, url, col, start) {
 //        if (!result.error) {
     var content = $("<table class='feed'></table>");
     if (!result.error) {
         for (var i = 0; i < result.feed.entries.length; i++) {
             var entry = result.feed.entries[i];
-            content.append($("<tr><td class='image'></td><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
+            var url = getThumbnailUrl(entry);
+            content.append($("<tr><td class='image'>"+(url ? ("<img width='80px' src='"+url+"'></img>") : "")+"</td><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
         }
     } else {
         if (url.substring(url.length - 3) != "rss") {

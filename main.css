@@ -11,6 +11,11 @@ a, a:visited {
     color: #3498db;
 }
 
+.portlet-header .title a {
+    color: white;
+    text-decoration: none;
+}
+
 .feed a {
     color: #3498db;
     text-decoration: none;

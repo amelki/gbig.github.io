@@ -48,33 +48,10 @@ function initColumns() {
 google.load("feeds", "1");
 var widgetCounter = 0;
 
-function loadFeed(result, url, col, start) {
-//        if (!result.error) {
-    var content = $("<table class='feed'></table>");
-    if (!result.error) {
-        for (var i = 0; i < result.feed.entries.length; i++) {
-            var entry = result.feed.entries[i];
-            content.append($("<tr><td class='image'></td><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
-//                $.get(entry.link, function(text) {
-//                    console.log(text);
-//                });
-        }
-    } else {
-        if (url.substring(url.length - 3) != "rss") {
-            setFeed((url.substring(url.length - 1) == "/") ? (url + "rss") : (url + "/rss"), col, start);
-            return;
-        } else {
-            content.append($("<div class='error'>Error while loading URL: '" + url + "'</div>"));
-        }
-    }
+function makePortlet(url, col, start, content) {
     var portlet = $("<div class='portlet'></div>");
     portlet.data("url", url);
     var portletHeader = $("<div class='portlet-header'><div class='title'></div><div class='close' title='Remove this feed'>&#215;</div></div>");
-    if (!result.error) {
-        portletHeader.find(".title").text(result.feed.title);
-    } else {
-        portletHeader.find(".title").text("Error");
-    }
     var portletContent = $("<div class='portlet-content" + (start ? " highlight" : "") + "'></div>");
     portletContent.append(content);
     portlet.append(portletHeader);
@@ -96,18 +73,52 @@ function loadFeed(result, url, col, start) {
         }
         setUrl();
     });
+    return portlet;
+}
+function loadFeed(result, url, col, start) {
+//        if (!result.error) {
+    var content = $("<table class='feed'></table>");
+    if (!result.error) {
+        for (var i = 0; i < result.feed.entries.length; i++) {
+            var entry = result.feed.entries[i];
+            content.append($("<tr><td class='image'></td><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
+        }
+    } else {
+        if (url.substring(url.length - 3) != "rss") {
+            setFeed((url.substring(url.length - 1) == "/") ? (url + "rss") : (url + "/rss"), col, start);
+            return;
+        } else {
+            content.append($("<div class='error'>Error while loading URL: '" + url + "'</div>"));
+        }
+    }
+    var portlet = makePortlet(url, col, start, content);
+    var portletHeader = portlet.find(".portlet-header");
+    if (!result.error) {
+        portletHeader.find(".title").html("<a target='_blank' href='"+result.feed.link+"'>"+result.feed.title+"</a>");
+    } else {
+        portletHeader.find(".title").text("Error");
+    }
+
 };
 
 function setFeed(url, col, start) {
-    if (url == 'https://mail.google.com/mail/feed/atom') {
-        $.getJSON(url, function(feedStr) {
-            alert(feedStr);
-            var parsed = new DOMParser().parseFromString(feedStr, "text/xml");
-            var result = {};
-            result.title = parsed.getElementsByTagName("title")[0];
-            result.entries = [];
-            loadFeed(result, url, col, start);
-        });
+    if (url == 'https://mail.google.com') {
+        var portlet = makePortlet(url, col, start);
+        portlet.find(".portlet-header").find(".title").text("GMail");
+        var signinUrl = "http://localhost:8081/oauth2/google/auth?clientRedirectURI=" + encodeURIComponent(window.location.href);
+        portlet.find(".portlet-content").html("<a href='" + signinUrl + "'>Sign in</a>");
+
+//        window.location = "http://localhost:8081/oauth2/google/auth?clientRedirectURI=" + encodeURIComponent(window.location.href);
+
+//        url = "http://localhost:8081/gmail?userName=amelki156&password=Bxocely,";
+//        $.get(url, function(feedStr) {
+//            alert(feedStr);
+//            var parsed = new DOMParser().parseFromString(feedStr, "text/xml");
+//            var result = {};
+//            result.title = parsed.getElementsByTagName("title")[0];
+//            result.entries = [];
+//            loadFeed(result, url, col, start);
+//        });
     } else {
         if (url.substring(0, 4) != "http") {
             url = "http://" + url;
@@ -141,7 +152,7 @@ function initDefault() {
     feeds = [
         [ "mashable.com", "http://feeds.bbci.co.uk/news/world/rss.xml" ],
         [ "http://feeds.feedburner.com/cnet/NnTv", "http://rss.news.yahoo.com/rss/mostemailed" ],
-        [ "http://rss.cnn.com/rss/edition.rss", "http://feedproxy.google.com/TechCrunch" ],
+        [ "http://rss.cnn.com/rss/edition.rss", "http://feedproxy.google.com/TechCrunch" ]
     ];
     setUrl();
 }

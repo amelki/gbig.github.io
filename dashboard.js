@@ -104,10 +104,35 @@ function getThumbnailUrl(entry) {
 function loadFeed(result, url, col, start) {
 //        if (!result.error) {
     var content = $("<table class='feed'></table>");
+	var json = $.xml2json(result.xmlDocument);
     if (!result.error) {
         for (var i = 0; i < result.feed.entries.length; i++) {
             var entry = result.feed.entries[i];
             var url = getThumbnailUrl(entry);
+					if (url == null) {
+						var thumbnail = json.channel.item[i].thumbnail;
+						if (thumbnail) {
+							if (thumbnail.url) {
+								url = thumbnail.url;
+							} else if (thumbnail.length > 0) {
+								for (var t = 0; t < thumbnail.length; t++) {
+									if (thumbnail[t].url) {
+										url = thumbnail[t].url;
+										break;
+									}
+								}
+							}
+						}
+						if (url == null) {
+							var cnt = json.channel.item[i].content;
+							if (cnt && cnt.url) {
+								url = cnt.url;
+							}
+						}
+					}
+					if (typeof url != "string") {
+						console.log("no URL found");
+					}
             content.append($("<tr><td class='image'>"+(url ? ("<img width='80px' src='"+url+"'></img>") : "")+"</td><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
         }
     } else {
@@ -151,6 +176,7 @@ function setFeed(url, col, start) {
             url = "http://" + url;
         }
         var feed = new google.feeds.Feed(url);
+			feed.setResultFormat(google.feeds.Feed.MIXED_FORMAT);
         feed.load(function(result) {
             loadFeed(result, url, col, start);
         });

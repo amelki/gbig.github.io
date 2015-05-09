@@ -129,6 +129,12 @@ function loadFeed(result, url, col, start) {
 								url = cnt.url;
 							}
 						}
+						if (url == null) {
+							var enclosure = json.channel.item[i].enclosure;
+							if (enclosure && enclosure.url) {
+								url = enclosure.url;
+							}
+						}
 					}
 					if (typeof url != "string") {
 						console.log("no URL found");

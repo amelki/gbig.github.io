@@ -108,42 +108,42 @@ function loadFeed(result, url, col, start) {
     if (!result.error) {
         for (var i = 0; i < result.feed.entries.length; i++) {
             var entry = result.feed.entries[i];
-            var url = getThumbnailUrl(entry);
-					if (url == null) {
+            var imgUrl = getThumbnailUrl(entry);
+					if (imgUrl == null) {
 						var thumbnail = json.channel.item[i].thumbnail;
 						if (thumbnail) {
 							if (thumbnail.url) {
-								url = thumbnail.url;
+								imgUrl = thumbnail.url;
 							} else if (thumbnail.length > 0) {
 								for (var t = 0; t < thumbnail.length; t++) {
 									if (thumbnail[t].url) {
-										url = thumbnail[t].url;
+										imgUrl = thumbnail[t].url;
 										break;
 									}
 								}
 							}
 						}
-						if (url == null) {
+						if (imgUrl == null) {
 							var cnt = json.channel.item[i].content;
 							if (cnt && cnt.url) {
-								url = cnt.url;
+								imgUrl = cnt.url;
 							}
 						}
-						if (url == null) {
+						if (imgUrl == null) {
 							var enclosure = json.channel.item[i].enclosure;
 							if (enclosure && enclosure.url) {
-								url = enclosure.url;
+								imgUrl = enclosure.url;
 							}
 						}
 					}
-					if (typeof url != "string") {
+					if (typeof imgUrl != "string") {
 						console.log("no URL found");
 					}
-            content.append($("<tr><td class='image'>"+(url ? ("<img width='80px' src='"+url+"'></img>") : "")+"</td><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
+            content.append($("<tr><td class='image'>"+(imgUrl ? ("<img width='80px' src='"+imgUrl+"'></img>") : "")+"</td><td><a target=\"_blank\" href=\"" + entry.link + "\">" + entry.title + "</a><br>" + entry.contentSnippet + "</td></tr>"));
         }
     } else {
         if (url.substring(url.length - 3) != "rss") {
-            setFeed((url.substring(url.length - 1) == "/") ? (url + "rss") : (url + "/rss"), col, start);
+            setFeed((url.substring(url.length - 1) == "/") ? (imgUrl + "rss") : (imgUrl + "/rss"), col, start);
             return;
         } else {
             content.append($("<div class='error'>Error while loading URL: '" + url + "'</div>"));

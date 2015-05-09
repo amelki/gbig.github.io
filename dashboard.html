@@ -9,6 +9,8 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="dashboard.js"></script>
     <script type="text/javascript" src="jquery.xml2json.js"></script>
+    <script type="text/javascript" src="typeahead.bundle.js"></script>
+    <script type="text/javascript" src="handlebars-v3.0.3.js"></script>
     <script type="text/javascript" >
         $(function () {
             var feedsParam = getURLParameter("feeds");
@@ -34,7 +36,7 @@
 
 <body>
 <div class="top">
-    <input type="text" placeholder="Enter feed URL" id="feedUrl" size="60"/>
+    <input type="text" placeholder="Type a term or enter a feed URL" id="feedUrl" size="60"/>
     <button class="btn" id="addFeed">
        Add Feed
     </button>

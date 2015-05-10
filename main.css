@@ -132,13 +132,18 @@ body {
   line-height: 20px;
 }
 
-.tt-suggestion:hover {
+.tt-suggestion .url {
+  font-size: 12px;
+  color: #888;
+}
+
+.tt-suggestion:hover, .tt-suggestion:hover .url {
   cursor: pointer;
   color: #fff;
   background-color: #0097cf;
 }
 
-.tt-suggestion.tt-cursor {
+.tt-suggestion.tt-cursor, .tt-suggestion.tt-cursor .url  {
   color: #fff;
   background-color: #0097cf;
 
@@ -147,3 +152,12 @@ body {
 .tt-suggestion p {
   margin: 0;
 }
+
+.top {
+  position: relative;
+}
+#addFeed {
+  position: relative;
+  top: 2px;
+}
+

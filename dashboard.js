@@ -259,26 +259,25 @@ function initDashboard() {
 	$("#feedUrl").typeahead({
 		minLength: 3,
 		hint: false,
-		highlight: true
+		highlight: false
 	}, {
 		name : "feeds",
-		display: "value",
+		display: "url",
 		source : function(query, syncResults, asyncResults) {
 			google.feeds.findFeeds(query, function(result) {
 				if (!result.error) {
 					var data = [];
 					for (var i = 0; i < result.entries.length; i++) {
-						data[data.length] = {
-							label: result.entries[i].title,
-							value: result.entries[i].url
-						};
+						 if (result.entries[i].url) {
+							 data[data.length] = result.entries[i];
+						 }
 					}
 					asyncResults(data);
 				}
 			});
 		},
 		templates : {
-			suggestion: Handlebars.compile('<div>{{{label}}}</div>')
+			suggestion: Handlebars.compile('<div><div class="title">{{{title}}}</div><div class="url">{{url}}</div></div>')
 		}
 	});
 
@@ -311,4 +310,5 @@ function initDashboard() {
 			e.stopImmediatePropagation();
 		}
 	});
+	$("#feedUrl").focus();
 }

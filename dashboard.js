@@ -199,6 +199,8 @@ function addFeed(urls) {
 		feeds[0].splice(0, 0, url);
 	}
 	setUrl();
+	$("#feedUrl").typeahead("val", "");
+	$("#feedUrl").focus();
 }
 var feeds = {};
 
@@ -264,20 +266,44 @@ function initDashboard() {
 		name : "feeds",
 		display: "url",
 		source : function(query, syncResults, asyncResults) {
-			google.feeds.findFeeds(query, function(result) {
-				if (!result.error) {
+			// Use the feedly API instead of the Google one to find feeds, because results are much better and richer
+			$.ajax({
+				// use a proxy to avoid CORS issues while calling the feedly API
+				url: "https://jsonp.afeld.me/",
+				async: true,
+				data: {
+					url: "http://cloud.feedly.com/v3/search/feeds?query="+encodeURIComponent(query)
+				},
+				success: function(res){
 					var data = [];
-					for (var i = 0; i < result.entries.length; i++) {
-						 if (result.entries[i].url) {
-							 data[data.length] = result.entries[i];
-						 }
+					for (var i = 0; i < res.results.length; i++) {
+						data[data.length] = {
+							title: res.results[i].title,
+							url: res.results[i].feedId.substring("feed/".length),
+							iconUrl: res.results[i].iconUrl
+						}
 					}
 					asyncResults(data);
 				}
 			});
+
+/*
+			google.feeds.findFeeds(query, function(result) {
+				if (!result.error) {
+					var data = [];
+					for (var i = 0; i < result.entries.length; i++) {
+						 //if (result.entries[i].url) {
+							 data[data.length] = result.entries[i];
+						 //}
+					}
+					asyncResults(data);
+				}
+			});
+*/
 		},
+		limit: 10,
 		templates : {
-			suggestion: Handlebars.compile('<div><div class="title">{{{title}}}</div><div class="url">{{url}}</div></div>')
+			suggestion: Handlebars.compile('<div><div class="icon"><img src="{{iconUrl}}"></div><div class="title">{{title}}</div><div class="url">{{url}}</div></div>')
 		}
 	});
 

@@ -261,7 +261,7 @@ function initDashboard() {
 	$("#feedUrl").typeahead({
 		minLength: 3,
 		hint: false,
-		highlight: false
+		highlight: true
 	}, {
 		name : "feeds",
 		display: "url",
